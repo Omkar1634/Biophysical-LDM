@@ -1,0 +1,73 @@
+# =================================================================
+#  LDM Pre-training Config  SD 2.1 on FFHQ-UV
+#  Architecture values read directly from model JSON configs
+#  Only training hyperparameters defined here
+# =================================================================
+
+# -- Paths --------------------------------------------------------
+paths:
+  model_dir:    "D:/Github/PhD Code/FFHQ-UV/ldm_pretrain"
+  dataset_dir:  "D:/Github/PhD Code/FFHQ-UV/dataset"
+  output_dir:   "D:/Github/PhD Code/FFHQ-UV/ldm_pretrain/outputs"
+  log_dir:      "D:/Github/PhD Code/FFHQ-UV/ldm_pretrain/logs"
+  sample_dir:   "D:/Github/PhD Code/FFHQ-UV/ldm_pretrain/samples"
+  skin_params:  "D:/Github/PhD Code/FFHQ-UV/skin_params_biophysical.csv"
+
+# -- Model --------------------------------------------------------
+model:
+  mixed_precision: "bf16"    # bf16 = native for Blackwell RTX 5070 Ti
+
+# -- ConditionEmbedder  our custom module ------------------------
+# seq_len and unet_dim auto-read from JSON configs in train_ldm.py
+condition_embedder:
+  num_scalars: 9             # 7 biophysical + age + gender
+  d:           1280          # sinusoidal + MLP hidden dim
+  T:           1000          # timestep range
+  activation:  "silu"
+  trainable:   true
+
+# -- Dual CFG Guidance  from paper -------------------------------
+guidance:
+  s_p: 5.0                   # modality  CLIP text prompt
+  s_c: 5.0                   # skin      ConditionEmbedder
+
+# -- Modality Prompts  ZDG*24 RGB2X ------------------------------
+modality_prompts:
+  albedo:      "Albedo Map"
+  deformation: "Vector field"
+  height:      "Bump and Displacement Map"
+  active:      "albedo"      # pre-training = albedo only
+
+# -- Training -----------------------------------------------------
+training:
+  batch_size:        2
+  grad_accum:        4       # effective batch = 8
+  epochs:            20
+  max_steps:         50000
+  learning_rate:     1e-5
+  lr_warmup_steps:   500
+  adam_beta1:        0.9
+  adam_beta2:        0.999
+  adam_weight_decay: 0.01
+  adam_eps:          1.0e-8
+  max_grad_norm:     1.0
+  num_workers:       0       # 0 = safe for Windows
+  seed:              42
+
+# -- Inference ----------------------------------------------------
+inference:
+  num_steps:        50
+  eta:              0.0
+  guidance_rescale: 0.7
+
+# -- Logging ------------------------------------------------------
+logging:
+  log_every:    50
+  save_every:   1000
+  sample_every: 500
+  num_samples:  2
+
+# -- Sample Prompts -----------------------------------------------
+sample_prompts:
+  - "Albedo Map"
+  - "Albedo Map"

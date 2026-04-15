@@ -1,0 +1,35 @@
+# Python Version: 3.10
+# CUDA: 12.8+ (required for NVIDIA Blackwell RTX 50xx series)
+
+# Core PyTorch (CUDA 12.8)
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+
+# Diffusion & LDM
+diffusers==0.27.2
+transformers==4.40.2
+accelerate==0.30.0
+
+# Dataset & Data Processing
+datasets==2.18.0
+pyarrow==14.0.2
+
+# HuggingFace Integration
+huggingface_hub
+
+# ML & Computer Vision Utilities
+omegaconf
+einops
+kornia
+
+# GPU Optimization
+xformers
+
+# Logging & Visualization
+tensorboard
+
+# Image & File Processing
+pillow
+tqdm
+pyyaml
