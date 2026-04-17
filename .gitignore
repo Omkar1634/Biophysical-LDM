@@ -1,6 +1,7 @@
 # Ignore  folder
 dataset/data
 dataset/train
+dataset/FFHQ-UV-Dataset
 output_maps/
 ssynth_data/
 Pretrain_Model/
@@ -27,3 +28,5 @@ FLAME_w_HIFI3D_UV.obj
 *.json
 *.safetensors
 *.ckpt
+*.zip
+*.tar.gz

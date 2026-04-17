@@ -6,12 +6,12 @@
 
 # -- Paths --------------------------------------------------------
 paths:
-  model_dir:    "D:/Github/PhD Code/FFHQ-UV/ldm_pretrain"
-  dataset_dir:  "D:/Github/PhD Code/FFHQ-UV/dataset"
-  output_dir:   "D:/Github/PhD Code/FFHQ-UV/ldm_pretrain/outputs"
-  log_dir:      "D:/Github/PhD Code/FFHQ-UV/ldm_pretrain/logs"
-  sample_dir:   "D:/Github/PhD Code/FFHQ-UV/ldm_pretrain/samples"
-  skin_params:  "D:/Github/PhD Code/FFHQ-UV/skin_params_biophysical.csv"
+  model_dir:    "D:/Github/PhD Code/Biophysical-LDM/ldm_pretrain"
+  dataset_dir:  "D:/Github/PhD Code/Biophysical-LDM/dataset"
+  output_dir:   "D:/Github/PhD Code/Biophysical-LDM/ldm_pretrain/outputs"
+  log_dir:      "D:/Github/PhD Code/Biophysical-LDM/ldm_pretrain/logs"
+  sample_dir:   "D:/Github/PhD Code/Biophysical-LDM/ldm_pretrain/samples"
+  skin_params:  "D:/Github/PhD Code/Biophysical-LDM/skin_params_biophysical.csv"
 
 # -- Model --------------------------------------------------------
 model:
@@ -40,8 +40,8 @@ modality_prompts:
 
 # -- Training -----------------------------------------------------
 training:
-  batch_size:        2
-  grad_accum:        4       # effective batch = 8
+  batch_size:        4
+  grad_accum:        8       # effective batch = 8
   epochs:            20
   max_steps:         50000
   learning_rate:     1e-5

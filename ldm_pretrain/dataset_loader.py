@@ -12,7 +12,7 @@ class FFHQUVDataset(Dataset):
         self.resolution = resolution
 
         # ── Load directly from local Arrow files ──────────────
-        dataset_path = r'D:\Github\PhD Code\FFHQ-UV\dataset'
+        dataset_path = r'D:\Github\PhD Code\Biophysical-LDM\dataset'
         print(f"📂 Loading from local Arrow files: {dataset_path}")
 
         self.dataset = load_from_disk(dataset_path)
