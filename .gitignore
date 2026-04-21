@@ -1,32 +1,9 @@
-# Ignore  folder
-dataset/data
-dataset/train
-dataset/FFHQ-UV-Dataset
-output_maps/
-ssynth_data/
-Pretrain_Model/
-ldm_pretrain/logs
-ldm_pretrain/outputs 
+# Ignore everything
+*
 
+# Except samples folder
+!samples/
+!samples/**
 
-# Ignore  files
-
-test.ipynb
-test_gpu.py
-skin_params.csv
-FLAME_w_HIFI3D_UV.obj
-
-# Ignore  system files
-.DS_Store
-.claude
-.vscode
-
-
-# Images
-*.png
-*.jpg   
-*.json
-*.safetensors
-*.ckpt
-*.zip
-*.tar.gz
+# And keep .gitignore
+!.gitignore
