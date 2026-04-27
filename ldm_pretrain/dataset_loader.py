@@ -1,82 +1,114 @@
 import os
+import sys
 import torch
 from torch.utils.data import Dataset
-from datasets import load_from_disk
 from PIL import Image
 import torchvision.transforms as T
 
-class FFHQUVDataset(Dataset):
+# Windows encoding fix
+sys.stdout.reconfigure(encoding="utf-8")
 
-    def __init__(self, resolution=512, max_samples=None):
+class FFHQUVDataset(Dataset):
+    """
+    Dataset loader for UV-unwrapped albedo face maps stored as PNG files.
+
+    Loads images directly from a folder — no Arrow format needed.
+    Skin parameters come separately from SkinParamDataset (CSV).
+
+    Folder structure expected:
+        D:/Github/PhD Code/Biophysical-LDM/dataset/Final UV Maps/
+            00001.png
+            00002.png
+            ...
+            54165.png
+    """
+
+    def __init__(self,
+                 resolution  = 768,
+                 dataset_dir = None,
+                 max_samples = None):
         super().__init__()
+
         self.resolution = resolution
 
-        # ── Load directly from local Arrow files ──────────────
-        dataset_path = r'D:\Github\PhD Code\Biophysical-LDM\dataset'
-        print(f"📂 Loading from local Arrow files: {dataset_path}")
+        # ── Dataset folder ─────────────────────────────────────
+        if dataset_dir is None:
+            dataset_dir = r"D:\Github\PhD Code\Biophysical-LDM\dataset\Final UV Maps"
 
-        self.dataset = load_from_disk(dataset_path)
+        print(f"Loading PNG images from: {dataset_dir}")
 
-        # If it loaded as DatasetDict, get the train split
-        if hasattr(self.dataset, 'keys'):
-            print(f"📦 Splits found: {list(self.dataset.keys())}")
-            self.dataset = self.dataset['train']
+        if not os.path.exists(dataset_dir):
+            raise FileNotFoundError(
+                f"Dataset folder not found: {dataset_dir}\n"
+                f"Please check the path in config.yaml → paths.dataset_dir"
+            )
+
+        # ── Collect all PNG files ──────────────────────────────
+        valid_exts  = {".png", ".jpg", ".jpeg"}
+        self.image_paths = sorted([
+            os.path.join(dataset_dir, f)
+            for f in os.listdir(dataset_dir)
+            if os.path.splitext(f.lower())[1] in valid_exts
+        ])
+
+        if len(self.image_paths) == 0:
+            raise RuntimeError(
+                f"No PNG/JPG images found in: {dataset_dir}"
+            )
 
         if max_samples:
-            self.dataset = self.dataset.select(range(max_samples))
+            self.image_paths = self.image_paths[:max_samples]
 
-        print(f"✅ Loaded {len(self.dataset)} samples")
-        print(f"📋 Columns: {self.dataset.column_names}")
+        print(f"Found {len(self.image_paths):,} images")
+        print(f"Resolution: {resolution}x{resolution}px")
+        print(f"Example: {os.path.basename(self.image_paths[0])}")
 
-        # Image transforms → resize + normalize to [-1, 1] for LDM
+        # ── Image transforms → normalize to [-1, 1] for LDM ───
         self.transform = T.Compose([
-            T.Resize((resolution, resolution),
-                     interpolation=T.InterpolationMode.BILINEAR),
+            T.Resize(
+                (resolution, resolution),
+                interpolation = T.InterpolationMode.BILINEAR,
+                antialias     = True,
+            ),
             T.CenterCrop(resolution),
             T.ToTensor(),
-            T.Normalize([0.5], [0.5]),  # [0,1] → [-1,1]
+            T.Normalize([0.5], [0.5]),   # [0, 1] -> [-1, 1]
         ])
 
     def __len__(self):
-        return len(self.dataset)
+        return len(self.image_paths)
 
     def __getitem__(self, idx):
-        sample = self.dataset[idx]
+        img_path = self.image_paths[idx]
 
-        # ── Load albedo image ──────────────────────────────────
-        albedo = sample["albedo_path"]
-        if not isinstance(albedo, Image.Image):
-            albedo = Image.fromarray(albedo)
-        albedo = albedo.convert("RGB")
-        pixel_values = self.transform(albedo)
+        # ── Load image ─────────────────────────────────────────
+        try:
+            image = Image.open(img_path).convert("RGB")
+        except Exception as e:
+            raise RuntimeError(f"Failed to load image {img_path}: {e}")
 
-        # ── Text caption ───────────────────────────────────────
-        text = sample.get("text", "") or "a UV unwrapped face albedo texture map"
-
-        # ── Condition metadata ─────────────────────────────────
-        age    = float(sample.get("age",   0) or 0) / 100.0
-        gender = float(sample.get("gender",0) or 0)
-        beard  = float(sample.get("bread", 0) or 0)  # "bread" = beard
+        pixel_values = self.transform(image)
 
         return {
-            "pixel_values": pixel_values,
-            "text":         text,
-            "age":          torch.tensor(age,    dtype=torch.float32),
-            "gender":       torch.tensor(gender, dtype=torch.float32),
-            "beard":        torch.tensor(beard,  dtype=torch.float32),
+            "pixel_values": pixel_values,              # (3, H, W) in [-1, 1]
+            "image_path":   img_path,                  # for debugging
         }
 
 
 # ── Quick test ─────────────────────────────────────────────────
 if __name__ == "__main__":
-    print("🔍 Testing dataset loader...\n")
-    dataset = FFHQUVDataset(resolution=512, max_samples=5)
+    import sys
+    print("Testing dataset loader...\n")
+
+    dataset = FFHQUVDataset(resolution=768, max_samples=5)
 
     sample = dataset[0]
-    print("\n📊 Sample keys    :", list(sample.keys()))
-    print("🖼️  pixel_values   :", sample["pixel_values"].shape)
-    print("📝 text            :", sample["text"])
-    print("👤 age             :", sample["age"].item())
-    print("⚧  gender          :", sample["gender"].item())
-    print("🧔 beard            :", sample["beard"].item())
-    print("\n✅ Dataset loader working!")
+    print("\nSample keys     :", list(sample.keys()))
+    print("pixel_values    :", sample["pixel_values"].shape)
+    print("pixel range     :",
+          sample["pixel_values"].min().item(),
+          "to",
+          sample["pixel_values"].max().item())
+    print("image_path      :", os.path.basename(sample["image_path"]))
+    print("\nDataset loader working!")
+    print(f"Total samples   : {len(dataset):,}")
