@@ -224,7 +224,8 @@ logger.info("Loading datasets...")
 image_dataset = FFHQUVDataset(
     resolution  = resolution,
     dataset_dir = P["dataset_dir"],
-)skin_dataset  = SkinParamDataset(P["skin_params"])
+)
+skin_dataset  = SkinParamDataset(P["skin_params"])
 
 logger.info(f"  Image dataset : {len(image_dataset):,} samples"
             f" | resolution={resolution}px")

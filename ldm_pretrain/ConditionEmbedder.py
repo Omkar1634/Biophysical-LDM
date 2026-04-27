@@ -40,7 +40,7 @@ class SkinParamDataset(Dataset):
 # ─────────────────────────────────────────────────────────────
 # STEP 2 — DataLoader
 # ─────────────────────────────────────────────────────────────
-dataset    = SkinParamDataset(r"D:\Github\PhD Code\Biophysical-LDM\skin_params_biophysical.csv")
+dataset    = SkinParamDataset(r"D:\Github\PhD Code\Biophysical-LDM\Pretrain_Model\skin_params_final_uv.csv")
 dataloader = DataLoader(dataset, batch_size=4, shuffle=True)
 
 
