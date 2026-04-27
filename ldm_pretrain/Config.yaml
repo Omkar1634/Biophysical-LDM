@@ -7,11 +7,11 @@
 # -- Paths --------------------------------------------------------
 paths:
   model_dir:    "D:/Github/PhD Code/Biophysical-LDM/ldm_pretrain"
-  dataset_dir:  "D:/Github/PhD Code/Biophysical-LDM/dataset"
+  dataset_dir: "D:/Github/PhD Code/Biophysical-LDM/dataset/Final UV Maps"
   output_dir:   "D:/Github/PhD Code/Biophysical-LDM/ldm_pretrain/outputs"
   log_dir:      "D:/Github/PhD Code/Biophysical-LDM/ldm_pretrain/logs"
   sample_dir:   "D:/Github/PhD Code/Biophysical-LDM/ldm_pretrain/samples"
-  skin_params:  "D:/Github/PhD Code/Biophysical-LDM/skin_params_biophysical.csv"
+  skin_params:  "D:/Github/PhD Code/Biophysical-LDM/Pretrain_Model/skin_params_final_uv.csv"
 
 # -- Model --------------------------------------------------------
 model:

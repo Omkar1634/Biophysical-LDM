@@ -221,8 +221,10 @@ logger.info(f"VRAM after loading : {torch.cuda.memory_allocated()/1e9:.2f} GB\n"
 # ══════════════════════════════════════════════════════════════
 logger.info("Loading datasets...")
 
-image_dataset = FFHQUVDataset(resolution=resolution, max_samples=5000)
-skin_dataset  = SkinParamDataset(P["skin_params"])
+image_dataset = FFHQUVDataset(
+    resolution  = resolution,
+    dataset_dir = P["dataset_dir"],
+)skin_dataset  = SkinParamDataset(P["skin_params"])
 
 logger.info(f"  Image dataset : {len(image_dataset):,} samples"
             f" | resolution={resolution}px")
