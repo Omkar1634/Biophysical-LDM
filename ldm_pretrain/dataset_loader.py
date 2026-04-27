@@ -95,20 +95,20 @@ class FFHQUVDataset(Dataset):
         }
 
 
-# ── Quick test ─────────────────────────────────────────────────
-if __name__ == "__main__":
-    import sys
-    print("Testing dataset loader...\n")
+# # ── Quick test ─────────────────────────────────────────────────
+# if __name__ == "__main__":
+#     import sys
+#     print("Testing dataset loader...\n")
 
-    dataset = FFHQUVDataset(resolution=768, max_samples=5)
+#     dataset = FFHQUVDataset(resolution=768, max_samples=5)
 
-    sample = dataset[0]
-    print("\nSample keys     :", list(sample.keys()))
-    print("pixel_values    :", sample["pixel_values"].shape)
-    print("pixel range     :",
-          sample["pixel_values"].min().item(),
-          "to",
-          sample["pixel_values"].max().item())
-    print("image_path      :", os.path.basename(sample["image_path"]))
-    print("\nDataset loader working!")
-    print(f"Total samples   : {len(dataset):,}")
+#     sample = dataset[0]
+#     print("\nSample keys     :", list(sample.keys()))
+#     print("pixel_values    :", sample["pixel_values"].shape)
+#     print("pixel range     :",
+#           sample["pixel_values"].min().item(),
+#           "to",
+#           sample["pixel_values"].max().item())
+#     print("image_path      :", os.path.basename(sample["image_path"]))
+#     print("\nDataset loader working!")
+#     print(f"Total samples   : {len(dataset):,}")
