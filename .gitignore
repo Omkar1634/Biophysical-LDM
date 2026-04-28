@@ -5,5 +5,11 @@
 !samples/
 !samples/**
 
+# And Pretrain_Model folder - but only specific file types
+!Pretrain_Model/
+!Pretrain_Model/**/*.py
+!Pretrain_Model/**/*.json
+!Pretrain_Model/**/*.csv
+
 # And keep .gitignore
 !.gitignore
